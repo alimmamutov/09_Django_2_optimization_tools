@@ -13,7 +13,7 @@ from mainapp.mixin import BaseClassContextMixin, CustomDispatchMixin
 from mainapp.models import Product, ProductCategory
 
 
-class IndexTemplateView(TemplateView):
+class IndexTemplateView(TemplateView, CustomDispatchMixin):
     template_name = 'admins/admin.html'
 
 #Users
@@ -45,7 +45,7 @@ class UserDeleteView(DeleteView,BaseClassContextMixin,CustomDispatchMixin):
 
     def delete(self, request, *args, **kwargs):
         self.object =self.get_object()
-        self.object.is_active = False
+        self.object.is_active = not self.object.is_active
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
