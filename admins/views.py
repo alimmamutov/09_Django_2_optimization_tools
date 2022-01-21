@@ -13,7 +13,7 @@ from mainapp.mixin import BaseClassContextMixin, CustomDispatchMixin
 from mainapp.models import Product, ProductCategory
 
 
-class IndexTemplateView(TemplateView, CustomDispatchMixin):
+class IndexTemplateView(TemplateView):
     template_name = 'admins/admin.html'
 
 #Users
@@ -45,7 +45,7 @@ class UserDeleteView(DeleteView,BaseClassContextMixin,CustomDispatchMixin):
 
     def delete(self, request, *args, **kwargs):
         self.object =self.get_object()
-        self.object.is_active = not self.object.is_active
+        self.object.is_active = False
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -56,11 +56,11 @@ class CategoryListView(ListView,BaseClassContextMixin,CustomDispatchMixin):
     title = 'Админка | Список категорий'
 
 
-    def get_queryset(self):
-        if self.kwargs:
-           return ProductCategory.objects.filter(id=self.kwargs.get('pk'))
-        else:
-           return ProductCategory.objects.all()
+    # def get_queryset(self):
+    #     if self.kwargs:
+    #        return ProductCategory.objects.filter(id=self.kwargs.get('pk'))
+    #     else:
+    #        return ProductCategory.objects.all()
 
 class CategoryDeleteView(DeleteView,BaseClassContextMixin,CustomDispatchMixin):
     model = ProductCategory
