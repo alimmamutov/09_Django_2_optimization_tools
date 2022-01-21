@@ -1,8 +1,10 @@
+
 from django.contrib import messages
 from django.contrib.auth.views import LoginView, LogoutView
+from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-
+from django.conf import settings
 # Create your views here.
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, UpdateView
@@ -12,33 +14,48 @@ from authapp.models import User
 from baskets.models import Basket
 from mainapp.mixin import BaseClassContextMixin, UserDispatchMixin
 
+
 class LoginListView(LoginView,BaseClassContextMixin):
     template_name = 'authapp/login.html'
     form_class = UserLoginForm
     title = 'GeekShop - Авторизация'
 
-class RegisterListView(FormView,BaseClassContextMixin):
+
+class RegisterListView(FormView, BaseClassContextMixin):
     model = User
     template_name = 'authapp/register.html'
     form_class = UserRegisterForm
     title = 'GeekShop - Регистрация'
     success_url = reverse_lazy('auth:login')
 
-
     def post(self, request, *args, **kwargs):
 
         form = self.form_class(data=request.POST)
         if form.is_valid():
-            form.save()
-            messages.set_level(request, messages.SUCCESS)
-            messages.success(request, 'Вы успешно зарегистрировались!')
+            user = form.save()
+            if self.send_verify_link(user):
+                messages.set_level(request, messages.SUCCESS)
+                messages.success(request, 'Вы успешно зарегистрировались!')
             return HttpResponseRedirect(reverse('authapp:login'))
         else:
             messages.set_level(request, messages.ERROR)
             messages.error(request, form.errors)
         return render(request, self.template_name, {'form': form})
 
-class ProfileFormView(UpdateView,BaseClassContextMixin,UserDispatchMixin):
+    @staticmethod
+    def send_verify_link(user):
+        verify_link = reverse('authapp:verify', args=[user.email, user.activation_key])
+        subject = f'для активации учетной записи {user.username} пройдите по сслыке'.encode('win1251')
+        message = f'для подтверждения учетной записи {user.username} на портале \n {settings.DOMAIN_NAME}{verify_link}'
+        return send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
+
+    @staticmethod
+    def verify(email, activation_key):
+
+        pass
+
+
+class ProfileFormView(UpdateView,BaseClassContextMixin, UserDispatchMixin):
     template_name = 'authapp/profile.html'
     form_class = UserProfilerForm
     success_url = reverse_lazy('authapp:profile')
@@ -57,6 +74,7 @@ class ProfileFormView(UpdateView,BaseClassContextMixin,UserDispatchMixin):
         context = super(ProfileFormView, self).get_context_data(**kwargs)
         context['baskets'] = Basket.objects.filter(user=self.request.user)
         return context
+
 
 class Logout(LogoutView):
     template_name = "mainapp/index.html"
