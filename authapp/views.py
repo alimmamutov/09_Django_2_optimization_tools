@@ -1,5 +1,4 @@
-
-from django.contrib import messages
+from django.contrib import messages, auth
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
@@ -15,7 +14,7 @@ from baskets.models import Basket
 from mainapp.mixin import BaseClassContextMixin, UserDispatchMixin
 
 
-class LoginListView(LoginView,BaseClassContextMixin):
+class LoginListView(LoginView, BaseClassContextMixin):
     template_name = 'authapp/login.html'
     form_class = UserLoginForm
     title = 'GeekShop - Авторизация'
@@ -42,27 +41,37 @@ class RegisterListView(FormView, BaseClassContextMixin):
             messages.error(request, form.errors)
         return render(request, self.template_name, {'form': form})
 
+    def verify(self, email, activation_key):
+        try:  # Здесь используем попытку исключение т.к. метод гет предназначен только для выбора одного значения,
+            #   Если указанных емэилов будет несколько - выйдет ошибка (избежать можно поставив ограничение на
+            #   уникаольность емэйлов при регистрации)
+            user = User.objects.get(email=email)
+            if user and user.activation_key == activation_key and not user.is_action_key_expires():
+                user.activation_key = ""
+                user.activation_key_expires = None
+                user.is_active = True
+                user.save()
+                auth.login(self, user)
+            return render(self,'authapp/verification.html')
+        except Exception as e:
+            return HttpResponseRedirect(reverse('index'))
+
     @staticmethod
     def send_verify_link(user):
         verify_link = reverse('authapp:verify', args=[user.email, user.activation_key])
-        subject = f'для активации учетной записи {user.username} пройдите по сслыке'.encode('win1251')
+        subject = f'для активации учетной записи {user.username} пройдите по сслыке'
         message = f'для подтверждения учетной записи {user.username} на портале \n {settings.DOMAIN_NAME}{verify_link}'
         return send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
 
-    @staticmethod
-    def verify(email, activation_key):
 
-        pass
-
-
-class ProfileFormView(UpdateView,BaseClassContextMixin, UserDispatchMixin):
+class ProfileFormView(UpdateView, BaseClassContextMixin, UserDispatchMixin):
     template_name = 'authapp/profile.html'
     form_class = UserProfilerForm
     success_url = reverse_lazy('authapp:profile')
     title = 'GeekShop - Профиль'
 
     def form_valid(self, form):
-        messages.set_level(self.request,messages.SUCCESS)
+        messages.set_level(self.request, messages.SUCCESS)
         messages.success(self.request, "Вы успешно зарегистрировались")
         super().form_valid(form)
         return HttpResponseRedirect(self.get_success_url())
