@@ -74,7 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.i18n',
                 'mainapp.context_processors.basket',
 
-                'social_django.context_processors.backends'
+                'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
             ],
         },
