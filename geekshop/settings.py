@@ -53,6 +53,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'geekshop.urls'
@@ -71,6 +73,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.i18n',
                 'mainapp.context_processors.basket',
+
+                'social_django.context_processors.backends'
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -158,7 +163,7 @@ EMAIL_USE_SSL = True if os.getenv('EMAIL_USE_SSL') == True else False
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = 'tmp/emails/'
 
-# EMAIL_HOST_USER ,EMAIL_HOST_PASSWORD = None, None
+EMAIL_HOST_USER ,EMAIL_HOST_PASSWORD = None, None
 # # python -m smtpd -n -c DebuggingServer localhost:25
 
 AUTHENTICATION_BACKENDS = (
@@ -166,9 +171,17 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.vk.VKOAuth2',
 )
 
-# Загружаем секреты из файла
-with open('geekshop/vk.json', 'r') as f:
-    VK = json.load(f)
+# Загружаем секреты из файла (пример из методички)
 
-SOCIAL_AUTH_VK_OAUTH2_KEY = VK['SOCIAL_AUTH_VK_OAUTH2_KEY']
-SOCIAL_AUTH_VK_OAUTH2_SECRET = VK['SOCIAL_AUTH_VK_OAUTH2_SECRET']
+# with open('geekshop/vk.json', 'r') as f:
+#     VK = json.load(f)
+
+# SOCIAL_AUTH_VK_OAUTH2_KEY = VK['SOCIAL_AUTH_VK_OAUTH2_KEY']
+# SOCIAL_AUTH_VK_OAUTH2_SECRET = VK['SOCIAL_AUTH_VK_OAUTH2_SECRET']
+
+# Пример с трансляции урока
+SOCIAL_AUTH_VK_OAUTH2_KEY = os.getenv("SOCIAL_AUTH_VK_OAUTH2_KEY")  # Здесь прописывается ай ди приложения вк
+SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv("SOCIAL_AUTH_VK_OAUTH2_SECRET")  # Здесь прописывается Защищённый ключ	 приложения вк
+SOCIAL_AUTH_VK_OAUTH2_API_VERSION = '5.131' # обязательно указать версию апи
+SOCIAL_AUTH_VK_OAUTH2_IGNORE_DEFAULT_SCOPE = True # Разрешить давать доступ к конф информации
+SOCIAL_AUTH_VK_OAUTH2_IGNORE_SCOPE = ['email'] # Указываем, что мы хотим запросить из пользователя
