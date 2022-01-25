@@ -35,6 +35,7 @@ class RegisterListView(FormView, BaseClassContextMixin):
             if self.send_verify_link(user):
                 messages.set_level(request, messages.SUCCESS)
                 messages.success(request, 'Вы успешно зарегистрировались!')
+                messages.success(request, f'Письмо с кодом подтверждения отправлено на почту {user.email}')
             return HttpResponseRedirect(reverse('authapp:login'))
         else:
             messages.set_level(request, messages.ERROR)
