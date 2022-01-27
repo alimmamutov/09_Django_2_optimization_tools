@@ -183,9 +183,9 @@ AUTHENTICATION_BACKENDS = (
 # Пример с трансляции урока
 SOCIAL_AUTH_VK_OAUTH2_KEY = os.getenv("SOCIAL_AUTH_VK_OAUTH2_KEY")  # Здесь прописывается ай ди приложения вк
 SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv("SOCIAL_AUTH_VK_OAUTH2_SECRET")  # Здесь прописывается Защищённый ключ	 приложения вк
-SOCIAL_AUTH_VK_OAUTH2_API_VERSION = '5.131' # обязательно указать версию апи
-SOCIAL_AUTH_VK_OAUTH2_IGNORE_DEFAULT_SCOPE = True # Разрешить давать доступ к конф информации
-SOCIAL_AUTH_VK_OAUTH2_IGNORE_SCOPE = ['email'] # Указываем, что мы хотим запросить из пользователя
+SOCIAL_AUTH_VK_OAUTH2_API_VERSION = '5.131'  # обязательно указать версию апи
+SOCIAL_AUTH_VK_OAUTH2_IGNORE_DEFAULT_SCOPE = True  # Разрешить давать доступ к конф информации
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']  # Указываем, что мы хотим запросить из пользователя
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
