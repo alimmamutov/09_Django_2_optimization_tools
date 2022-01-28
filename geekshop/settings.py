@@ -195,4 +195,9 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.create_user',
     'authapp.pipelines.save_user_profile',
     'social_core.pipeline.social_auth.associate_user',
-    'social_core.pipeline.social_auth.load_extra_data',)
+    'social_core.pipeline.social_auth.load_extra_data',
+)
+
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/users/error/'
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+

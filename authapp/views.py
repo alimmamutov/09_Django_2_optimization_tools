@@ -13,6 +13,8 @@ from authapp.models import User
 from baskets.models import Basket
 from mainapp.mixin import BaseClassContextMixin, UserDispatchMixin
 
+from django.views.generic.base import TemplateView
+
 
 class LoginListView(LoginView, BaseClassContextMixin):
     template_name = 'authapp/login.html'
@@ -95,3 +97,7 @@ class ProfileFormView(UpdateView, BaseClassContextMixin, UserDispatchMixin):
 
 class Logout(LogoutView):
     template_name = "mainapp/index.html"
+
+
+class ErrorPage(TemplateView):
+    template_name = 'authapp/error.html'
