@@ -54,8 +54,11 @@ def save_user_profile(backend, user, response, *args, **kwargs):
             photo.write(photo_response.content)
         user.image = path_photo
 
-    if data['personal']['lang']:
-        pass
+    if data['personal']['langs']:
+        lang_str = ''
+        for ind, lang in enumerate(data['personal']['langs']):
+            lang_str += f'{lang}' if ind == 0 else f', {lang}'
+        user.userprofile.langs = lang_str
 
     user.save()
 
