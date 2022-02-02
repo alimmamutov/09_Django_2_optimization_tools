@@ -19,6 +19,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.i18n import set_language
+from pip._vendor.html5lib.treeadapters.sax import namespace
+
 
 from mainapp.views import index, products
 
@@ -34,6 +36,7 @@ urlpatterns = [
     # path('lang/', set_language, name='language'),
     # path(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
+    path('', include('social_django.urls', namespace='social')),
 
 ]
 
