@@ -1,6 +1,7 @@
 # Create your views here.
 from dataclasses import fields
 
+from django.db import transaction
 from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -9,6 +10,7 @@ from django.views.generic import ListView, TemplateView, CreateView, DeleteView,
 
 from baskets.models import Basket
 from mainapp.mixin import BaseClassContextMixin
+from ordersapp.forms import OrderItemsForm, OrderForm
 from ordersapp.models import Order, OrderItem
 
 
@@ -18,7 +20,8 @@ class OrderListView(ListView, BaseClassContextMixin):
     # Здесь мы не указали  явно темплейт, т.к. он подставится автоматически при правильном названии темплейта
     # <название модели>_<тип вьюхи>.html
 
-    pass
+    def get_queryset(self):
+        return Order.objects.filter(is_active=True, user=self.request.user)
 
 
 class OrderCreateView(CreateView, BaseClassContextMixin):
@@ -29,14 +32,39 @@ class OrderCreateView(CreateView, BaseClassContextMixin):
 
     def get_context_data(self, **kwargs):
         context = super(OrderCreateView, self).get_context_data(**kwargs)
-        OrderFormSet = inlineformset_factory(Order, OrderItem, extra=3)
+
+        OrderFormSet = inlineformset_factory(Order, OrderItem, OrderItemsForm, extra=1)
         if self.request.POST:
             formset = OrderFormSet(self.request.POST)
         else:
-            basket = Basket.objects.filter(user=self.request.user)
+            basket_item = Basket.objects.filter(user=self.request.user)
+            if basket_item:
+                OrderFormSet = inlineformset_factory(Order, OrderItem, OrderItemsForm, extra=basket_item.count())
+                formset = OrderFormSet()
+                for num, form in enumerate(formset.forms):
+                    form.initial['product'] = basket_item[num].product
+                    form.initial['quantity'] = basket_item[num].quantity
+                    form.initial['price'] = basket_item[num].product.price
+                basket_item.delete()
+            else:
+                formset = OrderFormSet()
+        context['orderitems'] = formset
+        return context
 
     def form_valid(self, form):
-        pass
+        context = self.get_context_data()
+        orderitems = context['orderitems']
+        with transaction.atomic():
+            form.instance.user = self.request.user
+            self.object = form.save()
+            if orderitems.is_valid():
+                orderitems.instance = self.object
+                orderitems.save()
+
+            if self.object.get_total_cost() == 0:
+                self.object.delete()
+
+        return super(OrderCreateView, self).form_valid(form)
 
 
 class OrderDeleteView(DeleteView, BaseClassContextMixin):
@@ -46,7 +74,38 @@ class OrderDeleteView(DeleteView, BaseClassContextMixin):
 
 
 class OrderUpdateView(UpdateView):
-    pass
+    model = Order
+    fields = []
+    success_url = reverse_lazy('orders:list')
+    title = 'Geekshop | Редактирование заказа'
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderUpdateView, self).get_context_data(**kwargs)
+
+        OrderFormSet = inlineformset_factory(Order, OrderItem, OrderItemsForm, extra=1)
+        if self.request.POST:
+            formset = OrderFormSet(self.request.POST, instance=self.object)  # instance указывает какой именно объект мы изменяем
+        else:
+            formset = OrderFormSet(instance=self.object)
+            for form in formset:
+                if form.instance.pk:
+                    form.initial['price'] = form.instance.product.price
+        context['orderitems'] = formset
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        orderitems = context['orderitems']
+        with transaction.atomic():
+            self.object = form.save()
+            if orderitems.is_valid():
+                orderitems.instance = self.object
+                orderitems.save()
+
+            if self.object.get_total_cost() == 0:
+                self.object.delete()
+
+        return super(OrderUpdateView, self).form_valid(form)
 
 
 class OrderDetailView(DetailView, BaseClassContextMixin):

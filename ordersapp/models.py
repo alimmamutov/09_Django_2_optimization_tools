@@ -36,7 +36,8 @@ class Order(models.Model):
         return f'Текущий заказ {self.pk}'
 
     def get_total_quantity(self):
-        items = self.orderitems.select_related('product')
+        items = self.orderitems.select_related('product')  # здесь выбираются все связанные с заказом элементы из таблицы orderitem
+        # связь идет через orderitemS (такое название указано в модели order item атрибутом related_name)
         return sum(list(map(lambda x: x.quantity, items)))
 
     def get_total_cost(self):
@@ -47,7 +48,11 @@ class Order(models.Model):
         pass
 
     def delete(self, using=None, keep_parents=False):
-        pass
+        for item in self.orderitems.select_related('product'):
+            item.product.quantity += item.quantity
+            item.save()
+        self.is_active = False
+        self.save()
 
 
 class OrderItem(models.Model):
