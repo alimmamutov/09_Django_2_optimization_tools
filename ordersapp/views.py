@@ -2,6 +2,8 @@
 from dataclasses import fields
 
 from django.db import transaction
+from django.db.models.signals import pre_delete, pre_save
+from django.dispatch import receiver
 from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -128,3 +130,21 @@ def order_next_status(request, pk):
             break
     order.change_status(new_status)
     return HttpResponseRedirect(reverse('orders:list'))
+
+
+@receiver(pre_delete, sender=OrderItem)
+@receiver(pre_delete, sender=Basket)
+def product_quantity_update_delete(sender, instance, **kwargs):
+    instance.product.quantity += instance.quantity  # Возвращаем товары на склад
+    instance.save()
+
+
+@receiver(pre_save, sender=OrderItem)
+@receiver(pre_save, sender=Basket)
+def product_quantity_update_save(sender, instance, **kwargs):
+    if instance.pk:
+        get_item = instance.get_item(int(instance.pk))
+        instance.product.quantity -= instance.quantity - get_item
+    else:
+        instance.product.quantity -= instance.quantity
+    instance.product.save()
