@@ -48,6 +48,13 @@
                                 </a>
                             {% endif %}
                         </td>
+                        <td>
+                            {% if user.is_staff  %}
+                                <a href="{% url 'orders:next_status' item.pk %}">
+                                    следующий статус
+                                </a>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endif %}
             {% endfor %}

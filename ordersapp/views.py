@@ -113,8 +113,18 @@ class OrderDetailView(DetailView, BaseClassContextMixin):
     title = 'Geekshop | Просмотр заказа'
 
 
-def order_forming_complete(request, pk):
+def order_status_change(request, pk, new_status):
     order = get_object_or_404(Order, pk=pk)  # здесь получается объект модели по первичному ключу
-    order.status = Order.SEND_TO_PROCEED
-    order.save()
+    order.change_status(new_status)
+    return HttpResponseRedirect(reverse('orders:list'))
+
+
+def order_next_status(request, pk):
+    new_status = 0
+    order = get_object_or_404(Order, pk=pk)
+    for num, el in enumerate(Order.ORDER_STATUS_CHOICES):
+        if el[0] == order.status:
+            new_status = num + 1 if len(Order.ORDER_STATUS_CHOICES) > num + 1 else 0
+            break
+    order.change_status(new_status)
     return HttpResponseRedirect(reverse('orders:list'))

@@ -54,6 +54,10 @@ class Order(models.Model):
         self.is_active = False
         self.save()
 
+    def change_status(self, status):
+        self.status = self.ORDER_STATUS_CHOICES[status][0]
+        self.save()
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, verbose_name='заказ', related_name='orderitems', on_delete=models.CASCADE)

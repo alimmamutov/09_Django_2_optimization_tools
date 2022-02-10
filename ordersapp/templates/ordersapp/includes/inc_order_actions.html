@@ -2,7 +2,7 @@
     <div class="container">
         <div class="d-flex justify-content-around">
             <button class="btn btn-warning btn-round form-control w-25 my-2 last">
-                <a href="{% url 'orders:forming_complete' object.pk %}">
+                <a href="{% url 'orders:order_status_change' object.pk 1 %}">
                     совершить покупку
                 </a>
             </button>
@@ -12,6 +12,46 @@
         </div>
     </div>
 {% endif %}
+{% if object.status == 'STP' %}
+    <div class="container">
+        <div class="d-flex justify-content-around">
+            <button class="btn btn-warning btn-round form-control w-25 my-2 last">
+                <a href="{% url 'orders:order_status_change' object.pk 2 %}">
+                    Оплатить заказ
+                </a>
+            </button>
+        </div>
+    </div>
+{% endif %}
+{% if user.is_staff %}
+{% if object.status == 'PD' or object.status == 'PRD' or object.status == 'RDY' or object.status == 'CNC' %}
+<div class="container">
+    <div class="d-flex justify-content-around">
+        <button class="btn btn-warning btn-round form-control w-25 my-2 last">
+            <a href="{% url 'orders:order_status_change' object.pk 3 %}">
+                Принять заказ в работу
+            </a>
+        </button>
+        <button class="btn btn-warning btn-round form-control w-25 my-2 last">
+            <a href="{% url 'orders:order_status_change' object.pk 4 %}">
+                Заказ готов к выдаче
+            </a>
+        </button>
+        <button class="btn btn-warning btn-round form-control w-25 my-2 last">
+            <a href="{% url 'orders:order_status_change' object.pk 5 %}">
+                Отменить заказ
+            </a>
+        </button>
+        <button class="btn btn-warning btn-round form-control w-25 my-2 last">
+            <a href="{% url 'orders:order_status_change' object.pk 0 %}">
+                Вернуть в оформление
+            </a>
+        </button>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+
 <div class="container">
 
     <button class="btn btn-info btn-round form-control my-2 last">
