@@ -1,4 +1,4 @@
-window.onload = function () {
+function basket() {
     $('.basket_list').on('click', 'input[type="number"]', function () {
         let t_href = event.target
         $.ajax(
@@ -43,3 +43,4 @@ window.onload = function () {
 
 
 }
+window.addEventListener('DOMContentLoaded', basket);
