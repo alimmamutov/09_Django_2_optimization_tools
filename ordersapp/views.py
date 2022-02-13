@@ -5,13 +5,14 @@ from django.db import transaction
 from django.db.models.signals import pre_delete, pre_save
 from django.dispatch import receiver
 from django.forms import inlineformset_factory
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView, CreateView, DeleteView, UpdateView, DetailView
 
 from baskets.models import Basket
 from mainapp.mixin import BaseClassContextMixin
+from mainapp.models import Product
 from ordersapp.forms import OrderItemsForm, OrderForm
 from ordersapp.models import Order, OrderItem
 
@@ -84,7 +85,7 @@ class OrderUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(OrderUpdateView, self).get_context_data(**kwargs)
 
-        OrderFormSet = inlineformset_factory(Order, OrderItem, OrderItemsForm, extra=1)
+        OrderFormSet = inlineformset_factory(Order, OrderItem, OrderItemsForm, extra=0)
         if self.request.POST:
             formset = OrderFormSet(self.request.POST, instance=self.object)  # instance указывает какой именно объект мы изменяем
         else:
@@ -148,3 +149,12 @@ def product_quantity_update_save(sender, instance, **kwargs):
     else:
         instance.product.quantity -= instance.quantity
     instance.product.save()
+
+
+# контроллер получения цены продукта если есть pk, если нет то 0
+def product_price(request,pk):
+    if request.is_ajax():
+        product_item = Product.objects.filter(pk=pk).first()
+        if product_item:
+            return JsonResponse({'price': product_item.price})
+        return JsonResponse({'price': 0})

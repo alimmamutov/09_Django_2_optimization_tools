@@ -1,6 +1,5 @@
 from os.path import defpath
 
-import order as order
 from django.db import models
 from django.conf import settings
 # Create your models here.
