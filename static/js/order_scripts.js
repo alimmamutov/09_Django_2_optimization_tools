@@ -105,14 +105,14 @@ function orders() {
                    let price_html = "<span>" + data.price.toString().replace('.', ',') + "</span>";
                    let curr_tr = $('.order_form table').find('tr:eq(' + (orderitems_num + 1) + ')');
                    curr_tr.find('td:eq(2)').html(price_html);
-                   orderSummaryRecalc();
+                   orderSummaryRefresh();
                    }
                },
            })
 
     });
 
-    function orderSummaryRecalc() {
+    function orderSummaryRefresh() {
         order_total_quantity = 0;
         order_total_cost = 0;
         for (let i=0; i < total_forms; i++) {
@@ -120,7 +120,7 @@ function orders() {
             order_total_cost += quantity_arr[i] * price_arr[i];
         }
         $('.order_total_quantity').html(order_total_quantity.toString());
-        $('.order_total_cost').html(Number(order_total_cost.toFixed(2)).toString());
+        $('.order_total_cost').html(order_total_cost.toFixed(2).toString().replace('.',','));
     }
 }
 
