@@ -1,0 +1,144 @@
+    1  exit
+    2  ssh-keygen
+    3  /root/.ssh/id_rsa.pub
+    4  cat /root/.ssh/id_rsa.pub
+    5  apt update
+    6  apt install nginx
+    7  apt install postgresql postgresql-contrib
+    8  exit
+    9  nginx -v
+   10  postgresql -v
+   11  apt install posgresql postgresql-contrib
+   12  apt install postgresql postgresql-contrib
+   13  postgre -v
+   14  postgres -V
+   15  sudo apt install synaptic
+   16  dpkg -l
+   17  apt install python3-venv
+   18  nano /etc/postgresql/12/main/pg_hba.conf
+   19  systemctl restart posgresql
+   20  systemctl restart postgresql
+   21  systemctl status postgresql
+   22  useradd g www-data -m django
+   23  ls /home/
+   24  useradd -g www-data -m django
+   25  ls /home/
+   26  cd /home/
+   27  cd django/
+   28  git clone https://github.com/alimmamutov/09_Django_2_optimization_tools.git
+   29  python3 -m venv venv
+   30  source venv/bin/activate
+   31  git branch
+   32  ls
+   33  cd 09_Django_2_optimization_tools/
+   34  git branch
+   35  git pull
+   36  git checkout Lesson_05_Homework
+   37  git branch
+   38  ls
+   39  pip instal -r requirements.txt 
+   40  pip install -r requirements.txt 
+   41  git pull
+   42  pip freeze > requirements.txt pip uninstall -r requirements.txt -y deactivate rm -r venv/ 
+   43  pip freeze > requirements.txt 
+   44  pip unistall -r requirements.txt 
+   45  pip uninstall -r requirements.txt 
+   46  y
+   47  pip freeze
+   48  git pull 
+   49  git stash
+   50  git pull 
+   51  pip unistall -r requirements.txt 
+   52  pip install -r requirements.txt 
+   53  pip freeze
+   54  pip install wheel
+   55  pip install gunicorn
+   56  pip freeze
+   57  psql -v
+   58  psql -version
+   59  psql -U postgres
+   60  ls
+   61  python3 manage.py migrate
+   62  python3 manage.py fill_db
+   63  python3 manage.py runserver 0.0.0.0:8000
+   64  nano /etc/systemd/system/gunicorn.service
+   65  systemctl enable gunicorn.service 
+   66  systemctl start gunicorn.service 
+   67  systemctl status gunicorn.service 
+   68  chown -R django /home/django/
+   69  systemctl restart gunicorn.service 
+   70  systemctl status gunicorn.service 
+   71  chown -R django /home/django/
+   72  nano /etc/systemd/system/gunicorn.service
+   73  chown -R django /home/django/venv/
+   74  chown -R django /home/django/venv/bin/
+   75  chown -R django /home/django/venv/bin/gunicorn 
+   76  systemctl restart gunicorn.service 
+   77  systemctl status gunicorn.service 
+   78  cd /home/django/venv/bin
+   79  ls
+   80  nano /etc/systemd/system/gunicorn.service
+   81  systemctl restart gunicorn.service 
+   82  systemctl start gunicorn.service 
+   83  systemctl deamon-reload
+   84* cd
+   85  nano /etc/systemd/system/gunicorn.service
+   86  systemctl start gunicorn.service 
+   87  systemctl restart gunicorn.service
+   88  systemctl stop gunicorn.service
+   89  systemctl daemon-reload
+   90  systemctl start gunicorn.service
+   91  systemctl status gunicorn.service
+   92  systemctl stop gunicorn.service
+   93  systemctl
+   94  nano /etc/systemd/system/gunicorn.service
+   95  systemctl start gunicorn.service
+   96  systemctl status gunicorn.service
+   97  systemctl stop gunicorn.service
+   98  nano /etc/systemd/system/gunicorn.service
+   99  systemctl stop gunicorn.service
+  100  systemctl start gunicorn.service
+  101  systemctl daemon-reload
+  102  systemctl start gunicorn.service
+  103  systemctl status gunicorn.service
+  104  cd ../\
+  105  cd ../
+  106  cd 09_Django_2_optimization_tools/
+  107  nano /etc/systemd/system/gunicorn.service
+  108  fg
+  109  nano /etc/systemd/system/gunicorn.service
+  110  systemctl daemon-reload
+  111  systemctl start gunicorn.service
+  112  systemctl status gunicorn.service
+  113  nano /etc/systemd/system/gunicorn.service
+  114  systemctl restart gunicorn.service
+  115  systemctl daemon-reload
+  116  systemctl start gunicorn.service
+  117  systemctl status gunicorn.service
+  118  ls geekshop/
+  119  sudo /etc/nginx/sites-available/geekshop
+  120  sudo nano /etc/nginx/sites-available/geekshop
+  121  systemctl restart gunicorn.service
+  122  systemctl status gunicorn.service
+  123  cd /etc/nginx/site-avaliable
+  124  ln -s /etc/nginx/sites-available/geekshop /etc/nginx/sites-enabled/
+  125  rm /etc/nginx/sites-enabled/default 
+  126  systemctl restart gunicorn.service 
+  127  systemctl status  gunicorn.service 
+  128  nginx -t
+  129  system ctl restart nginx
+  130  systemctl restart nginx
+  131  systemctl status nginx
+  132  tail -f /var/log/nginx/error.log 
+  133  sudo nano /etc/nginx/sites-available/geekshop
+  134  cd geekshop/
+  135  ls
+  136  sudo nano /etc/nginx/sites-available/geekshop
+  137  systemctl restart nginx
+  138  systemctl restart gunicorn.service 
+  139  systemctl restart nginx
+  140  systemctl status nginx
+  141  systemctl status gunicorn.service 
+  142  sudo nano /etc/nginx/sites-available/geekshop
+  143  systemctl restart nginx
+  144  history > /home/django/history.txt
