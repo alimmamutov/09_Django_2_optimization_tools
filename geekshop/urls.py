@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 from django.views.i18n import set_language
 from pip._vendor.html5lib.treeadapters.sax import namespace
 
+import debug_toolbar
 
 from mainapp.views import index, products
 
@@ -42,3 +43,5 @@ urlpatterns = [
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += [path('debug', include(debug_toolbar.urls))]
+
