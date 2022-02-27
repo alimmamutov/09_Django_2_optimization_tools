@@ -1,0 +1,1 @@
+http://mamutov.shop/users/login/?next=/users/profile/ POST username=django&password=geekbrains
