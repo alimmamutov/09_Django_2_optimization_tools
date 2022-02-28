@@ -26,11 +26,11 @@ def products(request,id_category=None,page=1):
     }
 
     if id_category:
-        products= Product.objects.filter(category_id=id_category)
-        # products= Product.objects.filter(category_id=id_category).select_related()  # Здесь мы передаем в контект все связанные поля, чтобы в дальнейшем не обращаться к ним через точку
+        # products= Product.objects.filter(category_id=id_category)
+        products= Product.objects.filter(category_id=id_category).select_related()  # Здесь мы передаем в контект все связанные поля, чтобы в дальнейшем не обращаться к ним через точку
     else:
-        products = Product.objects.all()
-        # products = Product.objects.all().select_related()
+        # products = Product.objects.all()
+        products = Product.objects.all().select_related()
         # products = Product.objects.all().prefetch_related()  # при формировании связи многие ко многим - используем prefetch_related
 
     paginator = Paginator(products, per_page=3)
