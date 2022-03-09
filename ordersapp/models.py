@@ -43,6 +43,13 @@ class Order(models.Model):
         items = self.orderitems.select_related('product')
         return sum(list(map(lambda x: x.get_product_cost(), items)))
 
+    def get_summary(self):  # Вместо двух методов «get_total_quantity()» и «get_total_cost()» теперь возвращаем словарь
+        items = self.orderitems.select_related()
+        return{
+            'total_cost': sum(list(map(lambda x: x.get_product_cost(), items))),
+            'total_quantity': sum(list(map(lambda x: x.quantity, items)))
+        }
+
     def get_items(self):
         pass
 

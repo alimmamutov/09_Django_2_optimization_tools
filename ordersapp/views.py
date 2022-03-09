@@ -49,7 +49,7 @@ class OrderCreateView(CreateView, BaseClassContextMixin):
                     form.initial['product'] = basket_item[num].product
                     form.initial['quantity'] = basket_item[num].quantity
                     form.initial['price'] = basket_item[num].product.price
-                basket_item.delete()
+                # basket_item.delete() TODO: remove comments
             else:
                 formset = OrderFormSet()
         context['orderitems'] = formset
