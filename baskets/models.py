@@ -49,6 +49,12 @@ class Basket(models.Model):
         baskets = self.get_items_cached
         return sum(basket.quantity for basket in baskets)
 
+    def get_summary(self):  # Вместо двух методов «total_quantity()» и «total_sum()» теперь возвращаем словарь
+        baskets = self.user.basket.select_related()
+        return {
+            'total_sum': sum(basket.sum() for basket in baskets),
+            'total_quantity': sum(basket.quantity for basket in baskets)
+        }
     # def delete(self, *args, **kwargs):
     #     self.product.quantity += self.quantity  # Возвращаем товары на склад
     #     self.save()
