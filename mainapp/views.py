@@ -5,13 +5,25 @@ import json
 import os
 
 from django.views.generic import DetailView
-
+from django.conf import settings
+from django.core.cache import cache
 from mainapp.models import Product, ProductCategory
 
 MODULE_DIR = os.path.dirname(__file__)
 
 
 # Create your views here.
+def _get_link():
+    if settings.LOW_CACHE:
+        key = 'link_category'
+        link_category = cache.get(key)
+        if link_category is None:
+            link_category = ProductCategory.objects.all()
+            cache.set(key, link_category)
+        return link_category
+    else:
+        return ProductCategory.objects.all()
+
 
 def index(request):
     context = {
@@ -44,7 +56,8 @@ def products(request,id_category=None,page=1):
 
 
     context['products'] = products_paginator
-    context['categories'] = ProductCategory.objects.all()
+    # context['categories'] = ProductCategory.objects.all()
+    context['categories'] = _get_link()
     return render(request, 'mainapp/products.html', context)
 
 
