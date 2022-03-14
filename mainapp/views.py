@@ -25,6 +25,18 @@ def _get_link():
         return ProductCategory.objects.all()
 
 
+def _get_product():
+    if settings.LOW_CACHE:
+        key = 'link_product'
+        link_product = cache.get(key)
+        if link_product is None:
+            link_product = Product.objects.all().select_related('category')
+            cache.set(key, link_product)
+        return link_product
+    else:
+        return Product.objects.all().select_related('category')
+
+
 def index(request):
     context = {
         'title': 'Geekshop', }
@@ -37,14 +49,15 @@ def products(request,id_category=None,page=1):
         'title': 'Geekshop | Каталог',
     }
 
-    if id_category:
-        # products= Product.objects.filter(category_id=id_category)
-        products= Product.objects.filter(category_id=id_category).select_related()  # Здесь мы передаем в контект все связанные поля, чтобы в дальнейшем не обращаться к ним через точку
-    else:
-        # products = Product.objects.all()
-        products = Product.objects.all().select_related()
-        # products = Product.objects.all().prefetch_related()  # при формировании связи многие ко многим - используем prefetch_related
-
+    # if id_category: TODO: Позже сделать фильтрацию по продуктам
+    #     # products= Product.objects.filter(category_id=id_category)
+    #     products= Product.objects.filter(category_id=id_category).select_related()  # Здесь мы передаем в контект все связанные поля, чтобы в дальнейшем не обращаться к ним через точку
+    # else:
+    #     # products = Product.objects.all()
+    #     products = Product.objects.all().select_related()
+    #     # products = Product.objects.all().prefetch_related()  # при формировании связи многие ко многим - используем prefetch_related
+    #
+    products = _get_product()
     paginator = Paginator(products, per_page=3)
 
     try:
