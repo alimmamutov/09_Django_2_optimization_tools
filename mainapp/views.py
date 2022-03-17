@@ -4,6 +4,7 @@ from django.shortcuts import render
 import json
 import os
 
+from django.views.decorators.cache import cache_page, never_cache
 from django.views.generic import DetailView
 from django.conf import settings
 from django.core.cache import cache
@@ -43,21 +44,22 @@ def index(request):
     return render(request, 'mainapp/index.html', context)
 
 
+@cache_page(3600)
 def products(request,id_category=None,page=1):
 
     context = {
         'title': 'Geekshop | Каталог',
     }
 
-    # if id_category: TODO: Позже сделать фильтрацию по продуктам
-    #     # products= Product.objects.filter(category_id=id_category)
-    #     products= Product.objects.filter(category_id=id_category).select_related()  # Здесь мы передаем в контект все связанные поля, чтобы в дальнейшем не обращаться к ним через точку
-    # else:
-    #     # products = Product.objects.all()
-    #     products = Product.objects.all().select_related()
-    #     # products = Product.objects.all().prefetch_related()  # при формировании связи многие ко многим - используем prefetch_related
-    #
-    products = _get_product()
+    if id_category:
+        # products= Product.objects.filter(category_id=id_category)
+        products= Product.objects.filter(category_id=id_category).select_related()  # Здесь мы передаем в контект все связанные поля, чтобы в дальнейшем не обращаться к ним через точку
+    else:
+        # products = Product.objects.all()
+        products = Product.objects.all().select_related()
+        # products = Product.objects.all().prefetch_related()  # при формировании связи многие ко многим - используем prefetch_related
+
+    # products = _get_product()
     paginator = Paginator(products, per_page=3)
 
     try:
@@ -66,7 +68,6 @@ def products(request,id_category=None,page=1):
         products_paginator = paginator.page(1)
     except EmptyPage:
         products_paginator = paginator.page(paginator.num_pages)
-
 
     context['products'] = products_paginator
     # context['categories'] = ProductCategory.objects.all()
