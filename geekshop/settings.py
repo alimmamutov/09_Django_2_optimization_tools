@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os, json
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-3!qm%#5%$5g0-(%vu4%j@^x9(nvvh5h*wm^kngwb7dyq&qx4*c'
-from dotenv import load_dotenv
 load_dotenv(BASE_DIR / '.env')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -93,21 +93,23 @@ WSGI_APPLICATION = 'geekshop.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3_old',
-#     }
-# }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'geekshop',
-        'USER': 'postgres',
+a = os.getenv('PRODUCTION')
+PRODUCTION = True if os.getenv('PRODUCTION') == 'True' else False
+if not PRODUCTION:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3_old',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'geekshop',
+            'USER': 'postgres',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -154,8 +156,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = (BASE_DIR / 'static',)
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+if PRODUCTION:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+else:
+    STATICFILES_DIRS = (BASE_DIR / 'static',)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -170,7 +174,6 @@ LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_ERROR_URL = '/'
 
-
 DOMAIN_NAME = 'http://localhost:8000'
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
@@ -181,7 +184,7 @@ EMAIL_USE_SSL = True if os.getenv('EMAIL_USE_SSL') == True else False
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = 'tmp/emails/'
 
-EMAIL_HOST_USER ,EMAIL_HOST_PASSWORD = None, None
+EMAIL_HOST_USER, EMAIL_HOST_PASSWORD = None, None
 # # python -m smtpd -n -c DebuggingServer localhost:25
 
 AUTHENTICATION_BACKENDS = (
@@ -199,7 +202,8 @@ AUTHENTICATION_BACKENDS = (
 
 # Пример с трансляции урока
 SOCIAL_AUTH_VK_OAUTH2_KEY = os.getenv("SOCIAL_AUTH_VK_OAUTH2_KEY")  # Здесь прописывается ай ди приложения вк
-SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv("SOCIAL_AUTH_VK_OAUTH2_SECRET")  # Здесь прописывается Защищённый ключ	 приложения вк
+SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv(
+    "SOCIAL_AUTH_VK_OAUTH2_SECRET")  # Здесь прописывается Защищённый ключ	 приложения вк
 SOCIAL_AUTH_VK_OAUTH2_API_VERSION = '5.131'  # обязательно указать версию апи
 SOCIAL_AUTH_VK_OAUTH2_IGNORE_DEFAULT_SCOPE = True  # Разрешить давать доступ к конф информации
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']  # Указываем, что мы хотим запросить из пользователя
@@ -221,6 +225,7 @@ SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 if DEBUG:
     def show_toolbar(request):
         return True
+
 
     DEBUG_TOOLBAR_CONFIG = {
         'SHOW_TOOLBAR_CALLBACK': show_toolbar,
@@ -244,15 +249,15 @@ if DEBUG:
     ]
 
 if os.name == 'posix':
-   CACHE_MIDDLEWARE_ALIAS = 'default'
-   CACHE_MIDDLEWARE_SECONDS = 120
-   CACHE_MIDDLEWARE_KEY_PREFIX = 'geekshop'
+    CACHE_MIDDLEWARE_ALIAS = 'default'
+    CACHE_MIDDLEWARE_SECONDS = 120
+    CACHE_MIDDLEWARE_KEY_PREFIX = 'geekshop'
 
-   CACHES = {
-       'default': {
-           'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-           'LOCATION': '127.0.0.1:11211',
-       }
-   }
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': '127.0.0.1:11211',
+        }
+    }
 
 LOW_CACHE = True
